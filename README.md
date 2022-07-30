@@ -1,4 +1,5 @@
-# meals_app
+# SpotiStats
+
 
 A new Flutter project.
 
