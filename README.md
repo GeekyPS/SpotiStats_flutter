@@ -15,7 +15,7 @@ The following people have helped contribute to this project-->
 
 ## Authors
 
-- [@GeekyPS](https://github.com/GeekyPS)
+- [Priyanshu Srivastava](https://github.com/GeekyPS)
 
 
 ## Installation
