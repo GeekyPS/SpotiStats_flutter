@@ -12,26 +12,9 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   final url = "https://jsonplaceholder.typicode.com/photos";
-  var _postsJson = [];
+  
 
-  void fetchPosts() async {
-    try {
-      final response = await get(Uri.parse(url));
-      final jsonData = jsonDecode(response.body) as List;
-      setState(() {
-        _postsJson = jsonData;
-      });
-    } catch (err) {
-      // add error widget here
-    }
-  }
-
-  @override
-  void initState() {
-    
-    super.initState();
-    fetchPosts();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +62,9 @@ class _TabsScreenState extends State<TabsScreen> {
           body: TabBarView(
             children: [
               HomeScreen(),
-              HomeScreen(),
-              HomeScreen(),
-              HomeScreen(),
+              Global(),
+              Global(),
+              Global(),
               Global(),
               //CategoriesScreen(),
               //FavouritesScreen(),

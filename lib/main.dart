@@ -3,8 +3,6 @@ import 'package:get_storage/get_storage.dart';
 
 import 'package:flutter_complete_guide/splash.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
-
 void main() async {
   await GetStorage.init();
 

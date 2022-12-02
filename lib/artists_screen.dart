@@ -23,8 +23,8 @@ class ArtistsPage extends StatelessWidget {
           }).toList(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 0,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
             mainAxisExtent: 150,
           )),
     );

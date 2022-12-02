@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/dummy_data.dart';
+
 import 'package:flutter_complete_guide/dummy_data2.dart';
 import 'package:flutter_complete_guide/song_item.dart';
 import 'package:google_fonts/google_fonts.dart';
