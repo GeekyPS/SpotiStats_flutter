@@ -53,6 +53,7 @@ Click **Make a contribution** at the bottom of any docs page to make small chang
 
 ## Installation
 
+<img width="317" height="162" alt="Screenshot 2022-10-24 at 1 09 42 PM" src="https://user-images.githubusercontent.com/97830682/205662746-5b6f33a2-1608-4e90-8c36-ef82630981e0.png">
 Clone the forked repo to your local storage
 
 ```bash
