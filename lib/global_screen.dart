@@ -5,7 +5,6 @@ import 'artists_screen.dart';
 import 'songs_screen.dart';
 
 class Global extends StatefulWidget {
-  const Global({Key key}) : super(key: key);
 
   @override
   State<Global> createState() => _GlobalState();

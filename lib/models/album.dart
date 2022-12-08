@@ -6,10 +6,10 @@ class Album{
     final String imageUrl;    
 
 const Album({
-  @required this.rank,
-  @required this.name,
-  @required this.artistName,
-  @required this.imageUrl,
+  required this.rank,
+  required this.name,
+  required this.artistName,
+  required this.imageUrl,
 });
 }
 

@@ -3,7 +3,6 @@ import './dummy_data.dart';
 import 'artists.dart';
 
 class ArtistsPage extends StatelessWidget {
-  const ArtistsPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
