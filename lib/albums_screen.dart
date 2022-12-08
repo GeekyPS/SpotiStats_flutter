@@ -3,7 +3,6 @@ import 'package:flutter_complete_guide/album_item.dart';
 import 'package:flutter_complete_guide/dummy_data2.dart';
 
 class AlbumsScreen extends StatelessWidget {
-  const AlbumsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

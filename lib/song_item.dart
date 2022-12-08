@@ -8,10 +8,10 @@ class SongItem extends StatelessWidget {
   final String imageUrl;
 
   SongItem({
-    @required this.rank,
-    @required this.artists,
-    @required this.name,
-    @required this.imageUrl,
+    required this.rank,
+    required this.artists,
+    required this.name,
+    required this.imageUrl,
   });
 
   @override

@@ -11,10 +11,10 @@ class AlbumItem extends StatelessWidget {
   final String imageUrl;
 
   AlbumItem({
-    @required this.rank,
-    @required this.artists,
-    @required this.name,
-    @required this.imageUrl,
+    required this.rank,
+    required this.artists,
+    required this.name,
+    required this.imageUrl,
   });
 
   void _showAlbumSongs(BuildContext context) {

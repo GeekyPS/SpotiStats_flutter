@@ -1,8 +1,6 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/homeScreen.dart';
-import 'package:http/http.dart';
 import './global_screen.dart';
 
 class TabsScreen extends StatefulWidget {

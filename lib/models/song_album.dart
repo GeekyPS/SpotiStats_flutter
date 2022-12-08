@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-
-
 class SongAlbum {
   final String rank;
   final String id;
@@ -10,11 +7,11 @@ class SongAlbum {
   final String imageUrl;
 
 const SongAlbum({
-  @required this.rank,
-  @required this.id,
-  @required this.name,
-  @required this.Album,
-  @required this.Artist,
-  @required this.imageUrl
+  required this.rank,
+  required this.id,
+  required this.name,
+  required this.Album,
+  required this.Artist,
+  required this.imageUrl
 });
 }
