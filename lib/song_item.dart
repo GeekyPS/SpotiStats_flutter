@@ -7,12 +7,14 @@ class SongItem extends StatelessWidget {
   final String artists;
   final String name;
   final String imageUrl;
+  final String spotifyUri;
 
   SongItem({
     required this.rank,
     required this.artists,
     required this.name,
     required this.imageUrl,
+    this.spotifyUri = "spotify:track:7qiZfU4dY1lWllzX7mPBI3"
   });
 
   @override
@@ -23,7 +25,7 @@ class SongItem extends StatelessWidget {
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(10), bottomRight: Radius.circular(10),),
         child: GestureDetector(
-          onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=>MusicPlayerScreen())),
+          onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=>MusicPlayerScreen(spotifyUri: spotifyUri))),
           child: Container(
             height: 70,
             color: Color.fromRGBO(51, 51, 51, 0.6),

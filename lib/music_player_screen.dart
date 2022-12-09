@@ -2,11 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
-import 'package:spotify_sdk/models/crossfade_state.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
-import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
@@ -14,7 +11,8 @@ import 'widgets/sized_icon_button.dart';
 
 
 class MusicPlayerScreen extends StatefulWidget {
-  const MusicPlayerScreen({Key? key}) : super(key: key);
+  final String spotifyUri;
+  MusicPlayerScreen({required this.spotifyUri});
 
   @override
   _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
@@ -23,25 +21,11 @@ class MusicPlayerScreen extends StatefulWidget {
 class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   bool _loading = false;
   bool _connected = false;
-  final Logger _logger = Logger(
-    //filter: CustomLogFilter(), // custom logfilter can be used to have logs in release mode
-    printer: PrettyPrinter(
-      methodCount: 2, // number of method calls to be displayed
-      errorMethodCount: 8, // number of method calls if stacktrace is provided
-      lineLength: 120, // width of the output
-      colors: true, // Colorful log messages
-      printEmojis: true, // Print an emoji for each log message
-      printTime: true,
-    ),
-  );
-
-  CrossfadeState? crossfadeState;
   late ImageUri? currentTrackImageUri;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: StreamBuilder<ConnectionStatus>(
+    return StreamBuilder<ConnectionStatus>(
         stream: SpotifySdk.subscribeConnectionStatus(),
         builder: (context, snapshot) {
           _connected = false;
@@ -59,18 +43,13 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                   icon: const Icon(Icons.exit_to_app),
                 )
                     : Container(),
-                TextButton(
-                  onPressed: connectToSpotifyRemote,
-                  child: Icon(Icons.settings_remote, color: _connected ? Colors.green : Colors.red,),
-                ),
               ],
             ),
-            body: _sampleFlowWidget(context),
+            body: _bodyWidget(context),
             bottomNavigationBar: _connected ? _buildBottomBar(context) : null,
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildBottomBar(BuildContext context) {
@@ -84,15 +63,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
             children: [
               SizedIconButton(
                 width: 50,
-                onPressed: addToLibrary,
-                icon: Icons.favorite,
-              ),
-              TextButton(
-                onPressed: connectToSpotifyRemote,
-                child: Icon(Icons.settings_remote, color: _connected ? Colors.green : Colors.red,),
-              ),
-              SizedIconButton(
-                width: 50,
                 onPressed: () => checkIfAppIsActive(context),
                 icon: Icons.info,
               ),
@@ -103,26 +73,19 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     );
   }
 
-  Widget _sampleFlowWidget(BuildContext context2) {
+  Widget _bodyWidget(BuildContext context2) {
     return Stack(
       children: [
-        ListView(
+        _connected
+       ?  ListView(
           padding: const EdgeInsets.all(8),
           children: [
-            _connected
-                ? _buildPlayerContextWidget()
-                : const Center(
-              child: Text('Not connected'),
-            ),
             const Divider(),
-            _connected
-                ? _buildPlayerStateWidget()
-                : const Center(
-              child: Text('Not connected'),
-            ),
+            _buildPlayerStateWidget(),
             const Divider()
           ],
-        ),
+        )
+        : Center(child: ElevatedButton(onPressed: ()=> connectToSpotifyRemoteAndPlaySong(widget.spotifyUri), child: Text("Connect To Spotify Remote"),),),
         _loading
             ? Container(
             color: Colors.black12,
@@ -187,32 +150,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     );
   }
 
-  Widget _buildPlayerContextWidget() {
-    return StreamBuilder<PlayerContext>(
-      stream: SpotifySdk.subscribePlayerContext(),
-      initialData: PlayerContext('', '', '', ''),
-      builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
-        var playerContext = snapshot.data;
-        if (playerContext == null) {
-          return const Center(
-            child: Text('Not connected'),
-          );
-        }
-
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Title: ${playerContext.title}'),
-            Text('Subtitle: ${playerContext.subtitle}'),
-            Text('Type: ${playerContext.type}'),
-            Text('Uri: ${playerContext.uri}'),
-          ],
-        );
-      },
-    );
-  }
-
   Widget spotifyImageWidget(ImageUri image) {
     return FutureBuilder(
         future: SpotifySdk.getImage(
@@ -241,6 +178,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
   Future<void> disconnect() async {
     try {
+      pause();
       setState(() {
         _loading = true;
       });
@@ -262,13 +200,14 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     }
   }
 
-  Future<void> connectToSpotifyRemote() async {
+  Future<void> connectToSpotifyRemoteAndPlaySong(String spotifyUri) async {
     try {
       setState(() {
         _loading = true;
       });
       var result = await SpotifySdk.connectToSpotifyRemote(
-          clientId: "ad7bb4ba44c140c2986a96f2b8c7314b",
+          //TODO: Add your Spotify Client ID and use the redirectURl mentioned below in Spotify App Admin Settings
+          clientId: "CLIENT ID HERE",
           redirectUrl: "http://localhost/");
       setStatus(result
           ? 'connect to spotify successful'
@@ -276,6 +215,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
       setState(() {
         _loading = false;
       });
+      await SpotifySdk.play(spotifyUri: spotifyUri);
     } on PlatformException catch (e) {
       setState(() {
         _loading = false;
@@ -286,26 +226,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
         _loading = false;
       });
       setStatus('not implemented');
-    }
-  }
-
-  Future<String> getAccessToken() async {
-    try {
-      var authenticationToken = await SpotifySdk.getAccessToken(
-          clientId: "ad7bb4ba44c140c2986a96f2b8c7314b",
-          redirectUrl: "http://localhost/",
-          scope: 'app-remote-control, '
-              'user-modify-playback-state, '
-              'playlist-read-private, '
-              'playlist-modify-public,user-read-currently-playing');
-      setStatus('Got a token: $authenticationToken');
-      return authenticationToken;
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-      return Future.error('$e.code: $e.message');
-    } on MissingPluginException {
-      setStatus('not implemented');
-      return Future.error('not implemented');
     }
   }
 
@@ -319,77 +239,10 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     }
   }
 
-  Future getCrossfadeState() async {
-    try {
-      var crossfadeStateValue = await SpotifySdk.getCrossFadeState();
-      setState(() {
-        crossfadeState = crossfadeStateValue;
-      });
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
 
-  Future<void> queue() async {
+  Future<void> play(String spotifyUri) async {
     try {
-      await SpotifySdk.queue(
-          spotifyUri: 'spotify:track:58kNJana4w5BIjlZE2wq5m');
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> toggleRepeat() async {
-    try {
-      await SpotifySdk.toggleRepeat();
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> setRepeatMode(RepeatMode repeatMode) async {
-    try {
-      await SpotifySdk.setRepeatMode(
-        repeatMode: repeatMode,
-      );
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> setShuffle(bool shuffle) async {
-    try {
-      await SpotifySdk.setShuffle(
-        shuffle: shuffle,
-      );
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> toggleShuffle() async {
-    try {
-      await SpotifySdk.toggleShuffle();
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> play() async {
-    try {
-      await SpotifySdk.play(spotifyUri: 'spotify:track:58kNJana4w5BIjlZE2wq5m');
+      await SpotifySdk.play(spotifyUri: spotifyUri);
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {
@@ -437,37 +290,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     }
   }
 
-  Future<void> seekTo() async {
-    try {
-      await SpotifySdk.seekTo(positionedMilliseconds: 20000);
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> seekToRelative() async {
-    try {
-      await SpotifySdk.seekToRelativePosition(relativeMilliseconds: 20000);
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future<void> addToLibrary() async {
-    try {
-      await SpotifySdk.addToLibrary(
-          spotifyUri: 'spotify:track:58kNJana4w5BIjlZE2wq5m');
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
   Future<void> checkIfAppIsActive(BuildContext context) async {
     try {
       var isActive = await SpotifySdk.isSpotifyAppActive;
@@ -486,6 +308,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
-    _logger.i('$code$text');
+    debugPrint('$code$text');
   }
 }
