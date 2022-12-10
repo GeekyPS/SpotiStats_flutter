@@ -24,6 +24,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   late ImageUri? currentTrackImageUri;
 
   @override
+  void initState() {
+    connectToSpotifyRemoteAndPlaySong(widget.spotifyUri);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<ConnectionStatus>(
         stream: SpotifySdk.subscribeConnectionStatus(),
