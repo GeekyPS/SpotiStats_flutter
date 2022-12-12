@@ -16,54 +16,59 @@ class SongItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 7),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10), bottomRight: Radius.circular(10),),
-        child: Container(
-          height: 70,
-          color: Color.fromRGBO(51, 51, 51, 0.6),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 70,
-                height: 70,
-                child: Image.asset(imageUrl),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        name,
-                        style: GoogleFonts.assistant(
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            fontSize: 20),
+    return Card(
+      elevation: 20,
+      color: Colors.black,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        child: ClipRRect(
+          child: Card(
+            elevation: 40,
+            child: Container(
+              height: 70,
+              color: Color.fromRGBO(51, 51, 51, 0.6),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 70,
+                    height: 70,
+                    child: Image.asset(imageUrl),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            name,
+                            style: GoogleFonts.assistant(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                fontSize: 20),
+                          ),
+                          Text(artists,
+                              style: GoogleFonts.assistant(color: Colors.grey))
+                        ],
                       ),
-                      Text(artists,
-                          style: GoogleFonts.assistant(color: Colors.grey))
-                    ],
+                    ),
                   ),
-                ),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[800],
+                    child: Text(
+                      '#${rank}',
+                      style: GoogleFonts.pacifico(
+                        fontSize: 36,
+                        color: Colors.white60,
+                      ),
+                    ),
+                    maxRadius: 50,
+                    minRadius: 20,
+                  )
+                ],
               ),
-              CircleAvatar(
-                backgroundColor: Colors.grey[800],
-                child: Text(
-                  '#${rank}',
-                  style: GoogleFonts.pacifico(
-                    fontSize: 36,
-                    color: Colors.white60,
-                  ),
-                ),
-                maxRadius: 50,
-                minRadius: 20,
-              )
-            ],
+            ),
           ),
         ),
       ),
